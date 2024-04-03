@@ -8,7 +8,7 @@ const EntryMap = {
         6: [5, 6, 11],
         7: [1, 2, 4, 7, 8, 9, 10, 11],
         8: [3, 4, 6, 10, 11, 12],
-        total : 48
+        total: 48
     },
     2: {
         1: [3, 6, 7, 8, 10, 11],
@@ -52,7 +52,7 @@ const EntryMap = {
         6: [2, 5, 6, 9, 10, 11],
         7: [3, 5, 6, 12],
         8: [1, 2, 4, 5, 6, 7, 9, 10, 11],
-        total : 56
+        total: 56
     },
     6: {
         1: [1, 9, 12],
@@ -74,7 +74,7 @@ const EntryMap = {
         6: [6, 11, 12],
         7: [3, 5, 6, 11],
         8: [1, 3, 4, 6, 10, 11],
-        total : 39
+        total: 39
     }
 }
 
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
 
         for (let godNumber of output) {
-            if(!EntryMap[entryNumber]) continue;
+            if (!EntryMap[entryNumber]) continue;
             const currentEntry = EntryMap[entryNumber][godNumber]
             if (!currentEntry) continue;
             currentEntry.forEach(entry => {
@@ -114,9 +114,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 $(this).text('');
             })
         })
+        $('#entry-table td').each(function () {
+            if ($(this).hasClass('laknam-highlight')) {
+                $(this).removeClass('laknam-highlight');
+            }
+        })
         $(`#output-table td`).each(function () {
+            if ($(this).hasClass('laknam-highlight')) {
+                $(this).removeClass('laknam-highlight');
+            }
             if ($(this).hasClass('title')) return;
             $(this).text('');
+
         })
 
     }
@@ -128,7 +137,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
             if (!currentValues) return;
             currentValues = Number(currentValues);
             if (isNaN(currentValues)) return;
-            processTables($(this).data('index'), currentValues);
+            const currentIndex = $(this).data('index');
+            if (currentValues.toString().includes('8')) {
+                $(this).addClass('laknam-highlight');
+                $(`#output-table td[data-index=${currentIndex}]`).addClass('laknam-highlight')
+            }
+            processTables(currentIndex, currentValues);
         })
     }
 
