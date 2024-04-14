@@ -78,6 +78,57 @@ const EntryMap = {
     }
 }
 
+const godToNumberMap = {
+    'சூரி': 1,
+    'சந்': 2,
+    'செவ்': 3,
+    'புத': 4,
+    'குரு': 5,
+    'சுக்': 6,
+    'சனி': 7,
+    'லக்': 8
+}
+
+const transitionDayMap = {
+    1: {
+        box: 1,
+        move: 30,
+        till: new Date("2024-05-14"),
+    },
+    2: {
+        box: 3,
+        move: 2.5,
+        till: new Date("2024-04-16"),
+    },
+    3: {
+        box: 11,
+
+        move: 45,
+        till: new Date("2024-04-23")
+    },
+    4: {
+        box: 12,
+        move: 30,
+        till: new Date("2024-05-10")
+    },
+    5: {
+        box: 1,
+        move: 365,
+        till: new Date("2024-05-01")
+    },
+    6: {
+        box: 12,
+        move: 30,
+        till: new Date("2024-04-24")
+    },
+    7: {
+        box: 11,
+        move: 2.5 * 365,
+        till: new Date("2025-03-29")
+    }
+
+}
+
 
 const GOD_COUNT = 8;
 const RASI_COUNT = 12
@@ -87,14 +138,19 @@ const outputEntries = Object.keys(EntryMap)
 document.addEventListener("DOMContentLoaded", function (event) {
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
-        const output = [];
-        const sNumber = currentValues.toString();
-        for (let i = 0, len = sNumber.length; i < len; i += 1) {
-            output.push(+sNumber.charAt(i));
-        }
-
-        for (let godNumber of output) {
-            if (!EntryMap[entryNumber]) continue;
+        const output = currentValues.toString().split(/\s+/);
+        /*if (sNumber.includes("8")) {
+            for (let i = 0, len = sNumber.length; i < len; i += 1) {
+                output.push(+sNumber.charAt(i));
+            }
+        } else {
+            output = sNumber.split(" ");
+        }*/
+        if (!output.length)
+            return;
+        for (let god of output) {
+            let godNumber = godToNumberMap[god];
+            if (!EntryMap[entryNumber] || godNumber === undefined) continue;
             const currentEntry = EntryMap[entryNumber][godNumber]
             if (!currentEntry) continue;
             currentEntry.forEach(entry => {
@@ -135,15 +191,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
             let currentValues = $(this).text().trim();
             if (currentValues === 'invalid') return;
             if (!currentValues) return;
-            currentValues = Number(currentValues);
-            if (isNaN(currentValues)) return;
+            // currentValues = Number(currentValues);
+
+            // if (isNaN(currentValues)) return;
             const currentIndex = $(this).data('index');
-            if (currentValues.toString().includes('8')) {
+
+            if (currentValues.toString().includes('லக்') || currentValues.toString().includes('8')) {
                 $(this).addClass('laknam-highlight');
                 $(`#output-table td[data-index=${currentIndex}]`).addClass('laknam-highlight')
             }
+
             processTables(currentIndex, currentValues);
-        })
+        });
     }
 
     function finalOutTable() {
@@ -181,14 +240,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     $('#entry-table td').on('keyup', function (event) {
         let currentValues = $(this).text().trim()
-        if (currentValues === 'invalid') return clearTables();
+        //if (currentValues === 'invalid') return clearTables();
         if (!currentValues) return clearTables();
-        currentValues = Number(currentValues);
+        // currentValues = Number(currentValues);
 
-        if (isNaN(currentValues)) {
-            $(this).text('invalid')
-            return clearTables()
-        }
+        // if (isNaN(currentValues)) {
+        //     $(this).text('invalid')
+        //     return clearTables()
+        // }
         regenerateTables();
-    })
+    });
+
 });
