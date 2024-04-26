@@ -11,6 +11,7 @@ function mark(number, box) {
     if (valueToUpdate && box) {
         const selector = $(`#transition-table td[data-index=${box}]`)
         const existingValue = selector.text();
+        if(existingValue?.includes?.(valueToUpdate)) return;
         if (existingValue) {
             valueToUpdate = existingValue + ' ' + valueToUpdate;
         }
