@@ -1,6 +1,6 @@
 import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, transitionDayMap} from "./const";
 
-
+let processed
 document.addEventListener("DOMContentLoaded", function (event) {
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
@@ -106,6 +106,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
 
     (function planetaryPosition() {
+        if(processed)
+            return;
+        processed = true
         function mark(number, box) {
             if(box > 12){
                 box = box % 12
