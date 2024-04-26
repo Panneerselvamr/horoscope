@@ -1,7 +1,7 @@
 import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, transitionDayMap} from "./const";
 
 let processed
-document.addEventListener("DOMContentLoaded", function (event) {
+$(document).ready(function () {
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
         const output = currentValues.toString().split(/\s+/);
@@ -105,48 +105,44 @@ document.addEventListener("DOMContentLoaded", function (event) {
         finalOutTable();
     }
 
-    (function planetaryPosition() {
-        if(processed)
-            return;
-        processed = true
-        function mark(number, box) {
-            if(box > 12){
-                box = box % 12
+    function mark(number, box) {
+        if (box > 12) {
+            box = box % 12
+        }
+        const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
+            if (index === Number(number)) return god;
+        })
+        let valueToUpdate = findGod?.[0];
+        if (valueToUpdate && box) {
+            const selector = $(`#transition-table td[data-index=${box}]`)
+            const existingValue = selector.text();
+            if (existingValue) {
+                valueToUpdate = existingValue + ' ' + valueToUpdate;
             }
-            const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
-                if (index === Number(number)) return god;
-            })
-            let valueToUpdate = findGod?.[0];
-            if (valueToUpdate && box) {
-                const selector =  $(`#transition-table td[data-index=${box}]`)
-                const existingValue = selector.text();
-                if(existingValue){
-                    valueToUpdate = existingValue + ' ' + valueToUpdate;
-                }
-                selector.text(valueToUpdate);
-                for(let i=1; i<= GOD_COUNT; i++){
-                    $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
-                }
+            selector.text(valueToUpdate);
+            for (let i = 1; i <= GOD_COUNT; i++) {
+                $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
             }
         }
+    }
 
-        const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
-        for (let transitionKey in transitionDayMap) {
-            const value = transitionDayMap[transitionKey];
-            const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
-            if (tillDate > currentDate)
-                mark(transitionKey, value.box);
-            else {
-                const dayDifference = currentDate - tillDate;
-                if(dayDifference < value.move){
-                 mark(transitionKey,  value.box + 1);
-                }else {
-                    const numberOfMove = Math.round(dayDifference / value.move);
-                    mark(transitionKey, value.box + numberOfMove);
-                }
+    const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
+    for (let transitionKey in transitionDayMap) {
+        const value = transitionDayMap[transitionKey];
+        const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
+        if (tillDate > currentDate)
+            mark(transitionKey, value.box);
+        else {
+            const dayDifference = currentDate - tillDate;
+            if (dayDifference < value.move) {
+                mark(transitionKey, value.box + 1);
+            } else {
+                const numberOfMove = Math.round(dayDifference / value.move);
+                mark(transitionKey, value.box + numberOfMove);
             }
         }
-    })();
+    }
+
 
     $('#entry-table td').on('keyup', function (event) {
         let currentValues = $(this).text().trim()
