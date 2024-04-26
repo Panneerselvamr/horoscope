@@ -1,139 +1,5 @@
-const EntryMap = {
-    1: {
-        1: [1, 2, 4, 7, 8, 9, 10, 11],
-        2: [2, 5, 9, 10],
-        3: [1, 2, 4, 7, 8, 9, 10, 11],
-        4: [3, 5, 6, 9, 10, 11, 12],
-        5: [5, 6, 9, 11],
-        6: [5, 6, 11],
-        7: [1, 2, 4, 7, 8, 9, 10, 11],
-        8: [3, 4, 6, 10, 11, 12],
-        total: 48
-    },
-    2: {
-        1: [3, 6, 7, 8, 10, 11],
-        2: [1, 3, 6, 7, 10, 11],
-        3: [2, 3, 5, 6, 9, 10, 11],
-        4: [1, 3, 4, 5, 7, 8, 10, 11],
-        5: [1, 4, 7, 8, 10, 11, 12],
-        6: [3, 4, 5, 7, 9, 10, 11],
-        7: [3, 5, 6, 11],
-        8: [3, 6, 10, 11],
-        total: 49,
-    },
-    3: {
-        1: [3, 5, 6, 10, 11],
-        2: [3, 6, 11],
-        3: [1, 2, 4, 5, 6, 8, 9],
-        4: [3, 5, 6, 11],
-        5: [6, 10, 11, 12],
-        6: [6, 8, 11, 12],
-        7: [1, 4, 7, 8, 9, 10, 11],
-        8: [1, 3, 6, 10, 11],
-        total: 39
-    },
-    4: {
-        1: [5, 6, 9, 11, 12],
-        2: [2, 4, 6, 8, 10, 11],
-        3: [1, 2, 4, 7, 8, 9, 10, 11],
-        4: [1, 3, 5, 6, 9, 10, 11, 12],
-        5: [6, 8, 11, 12],
-        6: [1, 2, 3, 4, 5, 8, 9, 11],
-        7: [1, 2, 4, 7, 8, 9, 10, 11],
-        8: [1, 2, 4, 6, 8, 10, 11],
-        total: 54
-    },
-    5: {
-        1: [1, 2, 3, 4, 7, 8, 9, 10, 11],
-        2: [2, 5, 7, 9, 11],
-        3: [1, 2, 4, 7, 8, 10, 11],
-        4: [1, 2, 4, 5, 6, 9, 10, 11],
-        5: [1, 2, 3, 4, 7, 8, 10, 11],
-        6: [2, 5, 6, 9, 10, 11],
-        7: [3, 5, 6, 12],
-        8: [1, 2, 4, 5, 6, 7, 9, 10, 11],
-        total: 56
-    },
-    6: {
-        1: [1, 9, 12],
-        2: [1, 2, 3, 4, 5, 8, 9, 11, 12],
-        3: [3, 5, 6, 9, 11, 12],
-        4: [6, 9, 10, 11, 12],
-        5: [5, 8, 9, 10, 11],
-        6: [1, 2, 3, 4, 5, 8, 9, 10, 11],
-        7: [3, 4, 5, 8, 9, 10, 11],
-        8: [1, 2, 3, 4, 5, 8, 9, 11],
-        total: 52
-    },
-    7: {
-        1: [3, 4, 6, 7, 9, 10, 11],
-        2: [3, 6, 11],
-        3: [3, 5, 6, 10, 11, 12],
-        4: [6, 8, 9, 10, 11, 12],
-        5: [5, 6, 11, 12],
-        6: [6, 11, 12],
-        7: [3, 5, 6, 11],
-        8: [1, 3, 4, 6, 10, 11],
-        total: 39
-    }
-}
+import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, transitionDayMap} from "./const";
 
-const godToNumberMap = {
-    'சூரி': 1,
-    'சந்': 2,
-    'செவ்': 3,
-    'புத': 4,
-    'குரு': 5,
-    'சுக்': 6,
-    'சனி': 7,
-    'லக்': 8
-}
-
-const transitionDayMap = {
-    1: {
-        box: 1,
-        move: 30,
-        till: new Date("2024-05-14"),
-    },
-    2: {
-        box: 3,
-        move: 2.5,
-        till: new Date("2024-04-16"),
-    },
-    3: {
-        box: 11,
-
-        move: 45,
-        till: new Date("2024-04-23")
-    },
-    4: {
-        box: 12,
-        move: 30,
-        till: new Date("2024-05-10")
-    },
-    5: {
-        box: 1,
-        move: 365,
-        till: new Date("2024-05-01")
-    },
-    6: {
-        box: 12,
-        move: 30,
-        till: new Date("2024-04-24")
-    },
-    7: {
-        box: 11,
-        move: 2.5 * 365,
-        till: new Date("2025-03-29")
-    }
-
-}
-
-
-const GOD_COUNT = 8;
-const RASI_COUNT = 12
-
-const outputEntries = Object.keys(EntryMap)
 
 document.addEventListener("DOMContentLoaded", function (event) {
     function generateTable(entryNumber, rasiNumber, currentValues) {
@@ -217,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     }
 
+
     function calculateTotal(entryNumber) {
         let grandTotal = 0;
         for (let rasi = 1; rasi <= RASI_COUNT; rasi++) {
@@ -238,17 +105,49 @@ document.addEventListener("DOMContentLoaded", function (event) {
         finalOutTable();
     }
 
+    (function planetaryPosition() {
+        function mark(number, box) {
+            if(box > 12){
+                box = box % 12
+            }
+            const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
+                if (index === Number(number)) return god;
+            })
+            let valueToUpdate = findGod?.[0];
+            if (valueToUpdate && box) {
+                const selector =  $(`#transition-table td[data-index=${box}]`)
+                const existingValue = selector.text();
+                if(existingValue){
+                    valueToUpdate = existingValue + ' ' + valueToUpdate;
+                }
+                selector.text(valueToUpdate);
+                for(let i=1; i<= GOD_COUNT; i++){
+                    $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
+                }
+            }
+        }
+
+        const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
+        for (let transitionKey in transitionDayMap) {
+            const value = transitionDayMap[transitionKey];
+            const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
+            if (tillDate > currentDate)
+                mark(transitionKey, value.box);
+            else {
+                const dayDifference = currentDate - tillDate;
+                if(dayDifference < value.move){
+                 mark(transitionKey,  value.box + 1);
+                }else {
+                    const numberOfMove = Math.round(dayDifference / value.move);
+                    mark(transitionKey, value.box + numberOfMove);
+                }
+            }
+        }
+    })();
+
     $('#entry-table td').on('keyup', function (event) {
         let currentValues = $(this).text().trim()
-        //if (currentValues === 'invalid') return clearTables();
         if (!currentValues) return clearTables();
-        // currentValues = Number(currentValues);
-
-        // if (isNaN(currentValues)) {
-        //     $(this).text('invalid')
-        //     return clearTables()
-        // }
         regenerateTables();
     });
-
 });
