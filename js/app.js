@@ -1,17 +1,8 @@
 import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, transitionDayMap} from "./const";
-
-let processed
 $(document).ready(function () {
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
         const output = currentValues.toString().split(/\s+/);
-        /*if (sNumber.includes("8")) {
-            for (let i = 0, len = sNumber.length; i < len; i += 1) {
-                output.push(+sNumber.charAt(i));
-            }
-        } else {
-            output = sNumber.split(" ");
-        }*/
         if (!output.length)
             return;
         for (let god of output) {
