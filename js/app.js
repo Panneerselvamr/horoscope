@@ -1,47 +1,5 @@
-import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, transitionDayMap} from "./const";
-let processedTransition;
-function mark(number, box) {
-    if (box > 12) {
-        box = box % 12
-    }
-    const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
-        if (index === Number(number)) return god;
-    })
-    let valueToUpdate = findGod?.[0];
-    if (valueToUpdate && box) {
-        const selector = $(`#transition-table td[data-index=${box}]`)
-        const existingValue = selector.text();
-        if(existingValue?.includes?.(valueToUpdate)) return;
-        if (existingValue) {
-            valueToUpdate = existingValue + ' ' + valueToUpdate;
-        }
-        selector.text(valueToUpdate);
-        for (let i = 1; i <= GOD_COUNT; i++) {
-            $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
-        }
-    }
-}
-function displayTransition() {
-    if(processedTransition)
-        return;
-    processedTransition = true;
-    const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
-    for (let transitionKey in transitionDayMap) {
-        const value = transitionDayMap[transitionKey];
-        const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
-        if (tillDate > currentDate)
-            mark(transitionKey, value.box);
-        else {
-            const dayDifference = currentDate - tillDate;
-            if (dayDifference < value.move) {
-                mark(transitionKey, value.box + 1);
-            } else {
-                const numberOfMove = Math.round(dayDifference / value.move);
-                mark(transitionKey, value.box + numberOfMove);
-            }
-        }
-    }
-}
+import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, SUPER_GOD, transitionDayMap} from "./const";
+
 $(document).ready(function () {
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
@@ -133,14 +91,55 @@ $(document).ready(function () {
         $(`#entry${entryNumber}-finaloutput`).text(`output ${entryNumber} : ${grandTotal} / ${EntryMap[entryNumber]?.total} `)
     }
 
+    function generateSpecialGodValues() {
+        const houseMapping = {}
+        let finalOutput = ''
+        let grandTotal = 0;
+        for (let house = 1; house <= RASI_COUNT; house++) {
+            const value = $(`#entry-table td[data-index='${house}']`).text()
+            if (value?.trim().length) houseMapping[house] = value;
+        }
+        SUPER_GOD.lookFor.forEach(lookupGod => {
+            let currentTotalForLookUpGod = 0
+            const table = Object.entries(houseMapping)
+            const specialGodTable = Object.entries(SUPER_GOD.god);
+            const found = table.find(([, gods]) => gods.includes(lookupGod));
+            if (found) {
+
+                let currentNumber = +found[0];
+                table.forEach(([houseNumber, gods]) => {
+                    if (currentNumber !== +houseNumber) {
+                        houseNumber = (+houseNumber) - (currentNumber -1);
+                        if(houseNumber <0){
+                            houseNumber = 12 + houseNumber;
+                        }
+                    }else{ //god found in the same as special god so changing it to starting house
+                        houseNumber = 1;
+                    }
+                    if (SUPER_GOD.positions[houseNumber]) {
+                        specialGodTable.forEach(([god, godValue]) => {
+                                if(gods.includes(god)){
+                                    currentTotalForLookUpGod += (+godValue) * (+SUPER_GOD.positions[houseNumber]);
+                                }
+                        })
+                    }
+                })
+            }
+            finalOutput += `${lookupGod} : ${currentTotalForLookUpGod},   \n`
+            grandTotal+=currentTotalForLookUpGod;
+        })
+        $(`#output-table td[data-index='super-3-god-value']`).text(finalOutput);
+        if(grandTotal){
+            $(`#output-table td[data-index='super-3-god-total-value']`).text(grandTotal);
+        }
+    }
+
     function processTables(rasiNumber, currentValues) {
         outputEntries.map(entryNumber => generateTable(entryNumber, rasiNumber, currentValues))
         outputEntries.map(entryNumber => calculateTotal(entryNumber));
         finalOutTable();
+        generateSpecialGodValues()
     }
-
-
-
 
 
     $('#entry-table td').on('keyup', function (event) {
@@ -148,5 +147,50 @@ $(document).ready(function () {
         if (!currentValues) return clearTables();
         regenerateTables();
     });
-    displayTransition();
+
+    let processedTransition;
+
+    function mark(number, box) {
+        if (box > 12) {
+            box = box % 12
+        }
+        const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
+            if (index === Number(number)) return god;
+        })
+        let valueToUpdate = findGod?.[0];
+        if (valueToUpdate && box) {
+            const selector = $(`#transition-table td[data-index=${box}]`)
+            const existingValue = selector.text();
+            if (existingValue?.includes?.(valueToUpdate)) return;
+            if (existingValue) {
+                valueToUpdate = existingValue + ' ' + valueToUpdate;
+            }
+            selector.text(valueToUpdate);
+            for (let i = 1; i <= GOD_COUNT; i++) {
+                $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
+            }
+        }
+    }
+
+    (function displayTransition() {
+        if (processedTransition)
+            return;
+        processedTransition = true;
+        const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
+        for (let transitionKey in transitionDayMap) {
+            const value = transitionDayMap[transitionKey];
+            const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
+            if (tillDate > currentDate)
+                mark(transitionKey, value.box);
+            else {
+                const dayDifference = currentDate - tillDate;
+                if (dayDifference < value.move) {
+                    mark(transitionKey, value.box + 1);
+                } else {
+                    const numberOfMove = Math.round(dayDifference / value.move);
+                    mark(transitionKey, value.box + numberOfMove);
+                }
+            }
+        }
+    })()
 });
