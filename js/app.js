@@ -41,7 +41,8 @@ $(document).ready(function () {
             $(this).text('');
 
         })
-
+        $(`#output-table td[data-index='super-3-god-value']`).text('');
+        $(`#output-table td[data-index='super-3-god-total-value']`).text('');
     }
 
     function regenerateTables() {
