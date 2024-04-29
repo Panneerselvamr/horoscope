@@ -89,6 +89,12 @@ export const godToNumberMap = {
     'ராகு': 9,
     'கேது': 10
 }
+
+export const numberToGodMap = Object.keys(godToNumberMap).reduce((ret, key) => {
+    ret[godToNumberMap[key]] = key
+    return ret;
+}, {});
+
 export const transitionDayMap = {
     1: {
         box: 1,
@@ -142,8 +148,8 @@ export const RASI_COUNT = 12
 export const outputEntries = Object.keys(EntryMap)
 
 export const SUPER_GOD = {
-    positions :{
-        1 : 3,
+    positions: {
+        1: 3,
         2: 3,
         4: 3,
         7: 5,
@@ -151,10 +157,10 @@ export const SUPER_GOD = {
         12: 1,
     },
     god: {
-        'சூரி' : 2,
+        'சூரி': 2,
         'செவ்': 4,
         'சனி': 3,
-        'ராகு' : 1
+        'ராகு': 1
     },
     lookFor: ['லக்', 'சந்', 'சுக்']
 }

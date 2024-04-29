@@ -1,4 +1,13 @@
-import {EntryMap, GOD_COUNT, godToNumberMap, outputEntries, RASI_COUNT, SUPER_GOD, transitionDayMap} from "./const";
+import {
+    EntryMap,
+    GOD_COUNT,
+    godToNumberMap,
+    numberToGodMap,
+    outputEntries,
+    RASI_COUNT,
+    SUPER_GOD,
+    transitionDayMap
+} from "./const";
 
 $(document).ready(function () {
     function generateTable(entryNumber, rasiNumber, currentValues) {
@@ -110,27 +119,27 @@ $(document).ready(function () {
                 let currentNumber = +found[0];
                 table.forEach(([houseNumber, gods]) => {
                     if (currentNumber !== +houseNumber) {
-                        houseNumber = (+houseNumber) - (currentNumber -1);
-                        if(houseNumber <0){
+                        houseNumber = (+houseNumber) - (currentNumber - 1);
+                        if (houseNumber < 0) {
                             houseNumber = 12 + houseNumber;
                         }
-                    }else{ //god found in the same as special god so changing it to starting house
+                    } else { //god found in the same as special god so changing it to starting house
                         houseNumber = 1;
                     }
                     if (SUPER_GOD.positions[houseNumber]) {
                         specialGodTable.forEach(([god, godValue]) => {
-                                if(gods.includes(god)){
-                                    currentTotalForLookUpGod += (+godValue) * (+SUPER_GOD.positions[houseNumber]);
-                                }
+                            if (gods.includes(god)) {
+                                currentTotalForLookUpGod += (+godValue) * (+SUPER_GOD.positions[houseNumber]);
+                            }
                         })
                     }
                 })
             }
             finalOutput += `${lookupGod} : ${currentTotalForLookUpGod},   \n`
-            grandTotal+=currentTotalForLookUpGod;
+            grandTotal += currentTotalForLookUpGod;
         })
         $(`#output-table td[data-index='super-3-god-value']`).text(finalOutput);
-        if(grandTotal){
+        if (grandTotal) {
             $(`#output-table td[data-index='super-3-god-total-value']`).text(grandTotal);
         }
     }
@@ -142,12 +151,35 @@ $(document).ready(function () {
         generateSpecialGodValues()
     }
 
+    function changeNumberToGodOnOtherCells(currentIndex) {
+        $(`#entry-table td`).each(function () {
+            const currentValues = $(this).text().trim();
+            if (!currentValues.length) return;
+            const index = $(this).data('index');
+            //if (index === currentIndex) return;
+            let convertedValues = '';
+            const output = currentValues.toString().split(/\s+/);
+            output.forEach(currentValue => {
+                const converted = numberToGodMap[currentValue];
+                if (converted) {
+                    convertedValues += converted + ' ';
+                }else
+                 convertedValues += currentValue + ' ';
+            })
+            $(this).text(convertedValues.trim());
+        })
+    }
 
-    $('#entry-table td').on('keyup', function (event) {
+    $('#entry-table td').on('focusout', function (event) {
+        changeNumberToGodOnOtherCells($(this).data('index'))
         let currentValues = $(this).text().trim()
         if (!currentValues) return clearTables();
         regenerateTables();
+        //setTimeout(()=>changeNumberToGodOnOtherCells($(this).data('index')),1000)
     });
+    // $('#entry-table td').on('focusout',function (event){
+    //     changeNumberToGodOnOtherCells($(this).data('index'))
+    // })
 
     let processedTransition;
 
