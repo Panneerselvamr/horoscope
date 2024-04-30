@@ -29,7 +29,8 @@ $(document).ready(function () {
         }
     }
 
-    function clearTables() {
+    function clearTables(clearAll) {
+
         outputEntries.map(entryNumber => {
             $(`#entry${entryNumber}-finaloutput`).text(`output ${entryNumber}:`);
             $(`#entry${entryNumber}-table td`).each(function () {
@@ -41,6 +42,10 @@ $(document).ready(function () {
             if ($(this).hasClass('laknam-highlight')) {
                 $(this).removeClass('laknam-highlight');
             }
+            if(clearAll){
+                $(this).text('');
+            }
+
         })
         $(`#output-table td`).each(function () {
             if ($(this).hasClass('laknam-highlight')) {
@@ -48,7 +53,6 @@ $(document).ready(function () {
             }
             if ($(this).hasClass('title')) return;
             $(this).text('');
-
         })
         $(`#output-table td[data-index='super-3-god-value']`).text('');
         $(`#output-table td[data-index='super-3-god-total-value']`).text('');
@@ -120,7 +124,7 @@ $(document).ready(function () {
                 table.forEach(([houseNumber, gods]) => {
                     if (currentNumber !== +houseNumber) {
                         houseNumber = (+houseNumber) - (currentNumber - 1);
-                        if (houseNumber < 0) {
+                        if (houseNumber <= 0) {
                             houseNumber = 12 + houseNumber;
                         }
                     } else { //god found in the same as special god so changing it to starting house
@@ -170,13 +174,14 @@ $(document).ready(function () {
         })
     }
 
+
     $('#entry-table td').on('focusout', function (event) {
         changeNumberToGodOnOtherCells($(this).data('index'))
-        let currentValues = $(this).text().trim()
-        if (!currentValues) return clearTables();
         regenerateTables();
         //setTimeout(()=>changeNumberToGodOnOtherCells($(this).data('index')),1000)
     });
+
+    $('#horoscope-new, #horoscope-clear').on('click',()=>clearTables(true))
     // $('#entry-table td').on('focusout',function (event){
     //     changeNumberToGodOnOtherCells($(this).data('index'))
     // })
