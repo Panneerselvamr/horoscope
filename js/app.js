@@ -9,6 +9,32 @@ import {
     transitionDayMap
 } from "./const";
 
+let horoscopeData;
+let selectedHoroscopeName;
+
+async function loadJSON(key) {
+    try {
+        const response = await fetch('https://api.jsoneditoronline.org/v2/docs/' + key + '/data')
+        if (response.status === 200)
+            horoscopeData = await response.json();
+        return horoscopeData;
+    } catch (error) {
+        console.error("error loading JSON", error);
+    }
+}
+
+async function saveJSON(key) {
+    try {
+        const response = await fetch('https://api.jsoneditoronline.org/v2/docs/' + key + '/data', {
+            method: 'PUT',
+            body: JSON.stringify(horoscopeData)
+        })
+        return horoscopeData;
+    } catch (error) {
+        console.error("error loading JSON", error);
+    }
+}
+
 $(document).ready(function () {
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
@@ -42,10 +68,7 @@ $(document).ready(function () {
             if ($(this).hasClass('laknam-highlight')) {
                 $(this).removeClass('laknam-highlight');
             }
-            if(clearAll){
-                $(this).text('');
-            }
-
+            $(this).text('');
         })
         $(`#output-table td`).each(function () {
             if ($(this).hasClass('laknam-highlight')) {
@@ -56,6 +79,10 @@ $(document).ready(function () {
         })
         $(`#output-table td[data-index='super-3-god-value']`).text('');
         $(`#output-table td[data-index='super-3-god-total-value']`).text('');
+        if (clearAll) {
+            selectedHoroscopeName = null;
+            $(`#horoscope-selector`).val(0)
+        }
     }
 
     function regenerateTables() {
@@ -167,26 +194,70 @@ $(document).ready(function () {
                 const converted = numberToGodMap[currentValue];
                 if (converted) {
                     convertedValues += converted + ' ';
-                }else
-                 convertedValues += currentValue + ' ';
+                } else
+                    convertedValues += currentValue + ' ';
             })
             $(this).text(convertedValues.trim());
         })
     }
 
 
-    $('#entry-table td').on('focusout', function (event) {
-        changeNumberToGodOnOtherCells($(this).data('index'))
-        regenerateTables();
-        //setTimeout(()=>changeNumberToGodOnOtherCells($(this).data('index')),1000)
-    });
-
-    $('#horoscope-new, #horoscope-clear').on('click',()=>clearTables(true))
     // $('#entry-table td').on('focusout',function (event){
     //     changeNumberToGodOnOtherCells($(this).data('index'))
     // })
 
     let processedTransition;
+
+    function getCurrentConfig() {
+        const config = {}
+        $(`#entry-table td`).each(function () {
+            let currentValues = $(this).text().trim();
+            if (currentValues === 'invalid') return;
+            if (!currentValues) return;
+            // currentValues = Number(currentValues);
+
+            // if (isNaN(currentValues)) return;
+            const currentIndex = $(this).data('index');
+            config[currentIndex] = currentValues;
+        });
+        return config;
+    }
+
+    function loadSelectedHoroscope(json) {
+        if (!json)
+            return;
+        $(`#entry-table td`).each(function () {
+            const currentIndex = $(this).data('index');
+            const currentValues = json[currentIndex];
+            if (currentValues) {
+                $(this).text(currentValues);
+            }
+        });
+        regenerateTables();
+    }
+
+    function loadSelector() {
+        if (!horoscopeData || !Object.keys(horoscopeData).length) return;
+        $('#horoscope-selector-div').removeClass('hidden');
+        $('.added-horoscope').remove();
+        Object.entries(horoscopeData).forEach(([key, value]) => {
+            const name = atob(key)
+            if (name && value) {
+                $('#horoscope-selector').append($('<option>', {
+                    'class': 'added-horoscope',
+                    text: name,
+                    ...(selectedHoroscopeName === name ? {selected: true} : {}),
+                    value: JSON.stringify(value)
+                }));
+            }
+        })
+    }
+
+    async function loadHoroscopeJSON(value) {
+
+        await loadJSON(value.trim());
+        loadSelector();
+    }
 
     function mark(number, box) {
         if (box > 12) {
@@ -210,7 +281,7 @@ $(document).ready(function () {
         }
     }
 
-    (function displayTransition() {
+    function showTransition() {
         if (processedTransition)
             return;
         processedTransition = true;
@@ -230,5 +301,75 @@ $(document).ready(function () {
                 }
             }
         }
+    }
+
+    (function init() {
+        showTransition();
+        const key = localStorage.getItem('userSelectedKey')
+        if (key?.length > 0) {
+            $('#horoscopeInputKey').val(key);
+            loadHoroscopeJSON(key).then(() => console.log("loaded horoscope from localstorage")).catch(error => console.error('error loading horoscope on init'))
+        }
     })()
+
+    $('#entry-table td').on('focusout', function (event) {
+        changeNumberToGodOnOtherCells($(this).data('index'))
+        regenerateTables();
+    });
+
+    $('#horoscope-new, #horoscope-clear').on('click', () => clearTables(true))
+    $('#horoscope-open').on('click', () => {
+        $('.horoscope-key-elements').addClass('show').removeClass('hide')
+        $('.horoscope-name-elements').addClass('hide').removeClass('show')
+    })
+    $('#load-horoscope').on('click', async () => {
+        const value = $('#horoscopeInputKey').val()
+        if (!value)
+            return;
+        localStorage.setItem('userSelectedKey', value);
+        await loadHoroscopeJSON(value)
+    });
+
+
+    $('#save-horoscope-button').on('click', async () => {
+        if (!horoscopeData)
+            return;
+        const nameToBeSaved = $('#horoscopeNameKey').val();
+        const currentKey = $('#horoscopeInputKey').val();
+
+        if (!nameToBeSaved)
+            return console.log("name invalid");
+        if (!currentKey)
+            return console.log("key not found");
+        const base64Key = btoa(nameToBeSaved);
+        horoscopeData[base64Key] = getCurrentConfig();
+        await saveJSON(currentKey, horoscopeData);
+        loadSelector();
+    });
+
+    $('#horoscope-save').on('click', async () => {
+        const value = $('#horoscopeInputKey').val()
+        if (!value) {
+            $('.horoscope-key-elements').addClass('show').removeClass('hide')
+            $('.horoscope-name-elements').addClass('hide').removeClass('show')
+
+        } else {
+            if (selectedHoroscopeName) {
+                $('#horoscopeNameKey').val(selectedHoroscopeName);
+            }
+            $('.horoscope-name-elements').addClass('show').removeClass('hide')
+            $('.horoscope-key-elements').addClass('hide').removeClass('show')
+        }
+    })
+    $('#horoscope-selector').on('change', (event) => {
+        if (!event.currentTarget.value) clearTables(true);
+        try {
+            if (event.currentTarget.selectedIndex !== 0)
+                selectedHoroscopeName = $('#horoscope-selector option:selected').text()
+            clearTables();
+            loadSelectedHoroscope(JSON.parse(event.currentTarget.value));
+        } catch (error) {
+            clearTables(true)
+        }
+    })
 });
