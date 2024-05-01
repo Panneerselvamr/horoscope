@@ -52,7 +52,7 @@
 
         table#entry-table,
         table#output-table,
-        table#transition-table {
+        table#transition-table{
             border-collapse: collapse;
             font-family: "Arial Black", sans-serif;
         }
@@ -70,7 +70,22 @@
             text-align: center;
             padding: 0;
         }
-
+        table#thri-suniayam-table{
+            height: 5em;
+        }
+        table#thri-suniayam-table td{
+            border: solid thin;
+            height: 2em;
+            width: 10em;
+            text-align: center;
+            padding: 0;
+        }
+        table#thri-suniayam-table th{
+            height: 2em;
+            border: solid thin;
+            text-align: center;
+            padding: 0;
+        }
 
         table {
             border-collapse: collapse;
@@ -82,7 +97,7 @@
             align-content: center;
             flex-wrap: wrap;
             justify-content: center;
-            padding: 2%
+            padding: 20px
         }
 
         table td {
@@ -138,7 +153,7 @@ align-content: center;
 justify-content: center;
 flex-wrap: wrap;
 gap: 50px;
-padding : 2%">
+padding :20px;">
     <button id="horoscope-new" class="btn btn-info">New</button>
     <button id="horoscope-open" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modelDialog">Open
     </button>
@@ -154,9 +169,10 @@ padding : 2%">
 </div>
 
 
-<div style="display: flex;
+<div id="horoscope-table-collections" style="display: flex;
     flex-wrap: wrap;
     gap: 50px;">
+
     <table id="entry-table">
         <caption>Enter horoscope</caption>
         <colgroup>
@@ -291,8 +307,30 @@ padding : 2%">
             <td data-index="7">
             <td data-index="6">
     </table>
+
+
+
+    <table id="thri-suniayam-table">
+        <tbody id="thri-suniayam">
+        <th colspan="2">
+            திதி சூனியம்
+        </th>
+        <tr>
+            <td id="thri-suniayam-input" contenteditable="true">
+            <td id="thri-suniayam-result">
+        </tr>
+        <th colspan="2">
+            முடக்கு நட்சத்திரம் & ராசி
+        </th>
+        <tr>
+            <td id="mudaku-nachatram-input" contenteditable="true">
+            <td id="mudaku-nachatram-result">
+        </tr>
+    </table>
 </div>
-<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+
+
+<div id="horoscope-output-collection" style="display: flex; flex-wrap: wrap; gap: 20px;">
     <div>
         <h2 id="entry1-finaloutput"> output 1: </h2>
         <table id="entry1-table">
@@ -1404,6 +1442,7 @@ padding : 2%">
             </tbody>
         </table>
     </div>
+
 </div>
 </body>
 

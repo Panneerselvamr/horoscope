@@ -1,11 +1,11 @@
 import {
     EntryMap,
     GOD_COUNT,
-    godToNumberMap,
+    godToNumberMap, MUDAKU_NACHATRAM,
     numberToGodMap,
     outputEntries,
     RASI_COUNT,
-    SUPER_GOD,
+    SUPER_GOD, THIRI_SUNIYAM,
     transitionDayMap
 } from "./const";
 
@@ -308,7 +308,8 @@ $(document).ready(function () {
         const key = localStorage.getItem('userSelectedKey')
         if (key?.length > 0) {
             $('#horoscopeInputKey').val(key);
-            loadHoroscopeJSON(key).then(() => console.log("loaded horoscope from localstorage")).catch(error => console.error('error loading horoscope on init'))
+            loadHoroscopeJSON(key).then(() => console.log("loaded horoscope from localstorage"))
+                .catch(error => console.error('error loading horoscope on init'));
         }
     })()
 
@@ -317,7 +318,7 @@ $(document).ready(function () {
         regenerateTables();
     });
 
-    $('#horoscope-new, #horoscope-clear').on('click', () => clearTables(true))
+    $('#horoscope-new, #horoscope-clear').on('click', () => clearTables(true));
     $('#horoscope-open').on('click', () => {
         $('.horoscope-key-elements').addClass('show').removeClass('hide')
         $('.horoscope-name-elements').addClass('hide').removeClass('show')
@@ -350,26 +351,59 @@ $(document).ready(function () {
     $('#horoscope-save').on('click', async () => {
         const value = $('#horoscopeInputKey').val()
         if (!value) {
-            $('.horoscope-key-elements').addClass('show').removeClass('hide')
-            $('.horoscope-name-elements').addClass('hide').removeClass('show')
+            $('.horoscope-key-elements').addClass('show').removeClass('hide');
+            $('.horoscope-name-elements').addClass('hide').removeClass('show');
 
         } else {
             if (selectedHoroscopeName) {
                 $('#horoscopeNameKey').val(selectedHoroscopeName);
             }
-            $('.horoscope-name-elements').addClass('show').removeClass('hide')
-            $('.horoscope-key-elements').addClass('hide').removeClass('show')
+            $('.horoscope-name-elements').addClass('show').removeClass('hide');
+            $('.horoscope-key-elements').addClass('hide').removeClass('show');
         }
     })
     $('#horoscope-selector').on('change', (event) => {
         if (!event.currentTarget.value) clearTables(true);
         try {
             if (event.currentTarget.selectedIndex !== 0)
-                selectedHoroscopeName = $('#horoscope-selector option:selected').text()
+                selectedHoroscopeName = $('#horoscope-selector option:selected').text();
             clearTables();
             loadSelectedHoroscope(JSON.parse(event.currentTarget.value));
         } catch (error) {
             clearTables(true)
         }
     })
+    const thriSuniayamInput = $('#thri-suniayam-input');
+    thriSuniayamInput.on('focusout', () => {
+        const value = thriSuniayamInput.text().trim();
+        if (value) {
+            const map = THIRI_SUNIYAM[value];
+            if (map) {
+                thriSuniayamInput.text(map.name);
+                $('#thri-suniayam-result').text(map.value);
+            }
+        }
+    });
+    const mudukuNachatramInput = $('#mudaku-nachatram-input');
+    mudukuNachatramInput.on('focusout', () => {
+        const mudukuNachatramResult = $('#mudaku-nachatram-result');
+        const value = mudukuNachatramInput.text().trim()
+        if (value) {
+            let converted = MUDAKU_NACHATRAM[value];
+            if (!converted) return;
+            converted = value + "." + converted
+            mudukuNachatramInput.text(converted);
+
+            if (value === 19) {
+                return mudukuNachatramResult.text(converted);
+            }
+
+            let result = (19 - value) + 1;
+            if (result <= 0) {
+                result = result + 27;
+            }
+            result = ((19 + result) % 27)
+            mudukuNachatramResult.text(result + "." + MUDAKU_NACHATRAM[result]);
+        }
+    });
 });
