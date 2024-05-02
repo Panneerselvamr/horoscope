@@ -414,6 +414,8 @@ $(document).ready(function () {
                 thriSuniayamInput.text(map.name);
                 thriSuniayamResult.text(map.value);
             }
+        }else{
+            thriSuniayamResult.text("");
         }
     });
 
@@ -436,6 +438,8 @@ $(document).ready(function () {
             }
             result = ((19 + result) % 27)
             mudukuNachatramResult.text(result + "." + MUDAKU_NACHATRAM[result]);
+        }else{
+            mudukuNachatramResult.text("");
         }
     });
 });
