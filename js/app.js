@@ -36,6 +36,12 @@ async function saveJSON(key) {
 }
 
 $(document).ready(function () {
+    const thriSuniayamInput = $('#thri-suniayam-input');
+    const mudukuNachatramInput = $('#mudaku-nachatram-input');
+
+    const mudukuNachatramResult = $('#mudaku-nachatram-result');
+    const thriSuniayamResult = $('#thri-suniayam-result');
+
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
         const output = currentValues.toString().split(/\s+/);
@@ -209,7 +215,7 @@ $(document).ready(function () {
     let processedTransition;
 
     function getCurrentConfig() {
-        const config = {}
+        const houses = {}
         $(`#entry-table td`).each(function () {
             let currentValues = $(this).text().trim();
             if (currentValues === 'invalid') return;
@@ -218,21 +224,43 @@ $(document).ready(function () {
 
             // if (isNaN(currentValues)) return;
             const currentIndex = $(this).data('index');
-            config[currentIndex] = currentValues;
+            houses[currentIndex] = currentValues;
         });
-        return config;
+
+        return {
+            houses,
+            thriSuniyam: {
+                input: thriSuniayamInput.text().trim(),
+                result: thriSuniayamResult.text().trim(),
+            },
+            mudukuNachatram: {
+                input: mudukuNachatramInput.text().trim(),
+                result: thriSuniayamResult.text().trim(),
+            }
+
+        };
     }
 
-    function loadSelectedHoroscope(json) {
-        if (!json)
+    function loadSelectedHoroscope(config) {
+        if (!config)
             return;
+        let house = config.houses || config; //backward compatability
         $(`#entry-table td`).each(function () {
             const currentIndex = $(this).data('index');
-            const currentValues = json[currentIndex];
+            const currentValues = house[currentIndex];
             if (currentValues) {
                 $(this).text(currentValues);
             }
         });
+        if (config.thriSuniyam) {
+            thriSuniayamInput.text(config.thriSuniyam.input || '');
+            thriSuniayamResult.text(config.thriSuniyam.result || '');
+        }
+
+        if (config.mudukuNachatram) {
+            mudukuNachatramInput.text(config.mudukuNachatram.input || '');
+            mudukuNachatramResult.text(config.mudukuNachatram.result || '');
+        }
         regenerateTables();
     }
 
@@ -254,7 +282,6 @@ $(document).ready(function () {
     }
 
     async function loadHoroscopeJSON(value) {
-
         await loadJSON(value.trim());
         loadSelector();
     }
@@ -373,21 +400,21 @@ $(document).ready(function () {
             clearTables(true)
         }
     })
-    const thriSuniayamInput = $('#thri-suniayam-input');
+
     thriSuniayamInput.on('focusout', () => {
         const value = thriSuniayamInput.text().trim();
         if (value) {
             const map = THIRI_SUNIYAM[value];
             if (map) {
                 thriSuniayamInput.text(map.name);
-                $('#thri-suniayam-result').text(map.value);
+                thriSuniayamResult.text(map.value);
             }
         }
     });
-    const mudukuNachatramInput = $('#mudaku-nachatram-input');
+
     mudukuNachatramInput.on('focusout', () => {
-        const mudukuNachatramResult = $('#mudaku-nachatram-result');
-        const value = mudukuNachatramInput.text().trim()
+
+        const value = mudukuNachatramInput.text().trim();
         if (value) {
             let converted = MUDAKU_NACHATRAM[value];
             if (!converted) return;
