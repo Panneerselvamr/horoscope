@@ -85,6 +85,11 @@ $(document).ready(function () {
         })
         $(`#output-table td[data-index='super-3-god-value']`).text('');
         $(`#output-table td[data-index='super-3-god-total-value']`).text('');
+
+        mudukuNachatramInput.text('');
+        mudukuNachatramResult.text('');
+        thriSuniayamInput.text('');
+        thriSuniayamResult.text('');
         if (clearAll) {
             selectedHoroscopeName = null;
             $(`#horoscope-selector`).val(0)
@@ -215,7 +220,7 @@ $(document).ready(function () {
     let processedTransition;
 
     function getCurrentConfig() {
-        const houses = {}
+        const horoscope = {}
         $(`#entry-table td`).each(function () {
             let currentValues = $(this).text().trim();
             if (currentValues === 'invalid') return;
@@ -224,11 +229,11 @@ $(document).ready(function () {
 
             // if (isNaN(currentValues)) return;
             const currentIndex = $(this).data('index');
-            houses[currentIndex] = currentValues;
+            horoscope[currentIndex] = currentValues;
         });
 
         return {
-            houses,
+            horoscope,
             thriSuniyam: {
                 input: thriSuniayamInput.text().trim(),
                 result: thriSuniayamResult.text().trim(),
@@ -244,10 +249,10 @@ $(document).ready(function () {
     function loadSelectedHoroscope(config) {
         if (!config)
             return;
-        let house = config.houses || config; //backward compatability
+        let horoscope = config.horoscope || config; //backward compatability
         $(`#entry-table td`).each(function () {
             const currentIndex = $(this).data('index');
-            const currentValues = house[currentIndex];
+            const currentValues = horoscope[currentIndex];
             if (currentValues) {
                 $(this).text(currentValues);
             }
