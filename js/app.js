@@ -259,7 +259,7 @@ $(document).ready(function () {
             },
             karmaVinaikal: {
                 input: karmaVinaikalSelector.val().trim(),
-                result: karmaVinaikalSelector.text().trim(),
+                result: karmaVinaikalSelector.find("option:selected")?.text?.(),
             }
 
         };
@@ -291,8 +291,9 @@ $(document).ready(function () {
             })
         }
         if (config.karmaVinaikal) {
+            let value = config.karmaVinaikal.input;
             karmaVinaikalSelector.val(config.karmaVinaikal.input || "நட்சத்திரம்")
-            thriSuniayamResult.text(config.karmaVinaikal.result || '');
+            karmaVinaikalResult.text(value?.split?.(":")[0] || '');
         }
         regenerateTables();
     }
@@ -440,7 +441,8 @@ $(document).ready(function () {
         thriSuniayamResult.text(THIRI_SUNIYAM[value] || '');
     });
     karmaVinaikalSelector.on('change', event => {
-        const value = event.currentTarget.value;
+        let value = event.currentTarget.value;
+        value = value.split(":")[0]
         karmaVinaikalResult.text(value || '');
     })
 
