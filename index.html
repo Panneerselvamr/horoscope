@@ -52,7 +52,7 @@
 
         table#entry-table,
         table#output-table,
-        table#transition-table{
+        table#transition-table {
             border-collapse: collapse;
             font-family: "Arial Black", sans-serif;
         }
@@ -70,17 +70,20 @@
             text-align: center;
             padding: 0;
         }
-        table#thri-suniayam-table{
+
+        table#thri-suniayam-table {
             height: 5em;
         }
-        table#thri-suniayam-table td{
+
+        table#thri-suniayam-table td {
             border: solid thin;
             height: 2em;
-            width: 10em;
+            width: 12em;
             text-align: center;
             padding: 0;
         }
-        table#thri-suniayam-table th{
+
+        table#thri-suniayam-table th {
             height: 2em;
             border: solid thin;
             text-align: center;
@@ -164,8 +167,24 @@ padding :20px;">
 
 <div id="horoscope-selector-div" class="select-center hidden">
     <select style="width: 60%" id="horoscope-selector" class="form-select" aria-label="Horoscope selector">
-    <option selected value=0>Select Horoscope</option>
+        <option selected value=0>Select Horoscope</option>
     </select>
+</div>
+
+
+<div style="display: flex;
+align-content: center;
+justify-content: center;
+flex-wrap: wrap;
+gap: 50px;
+margin-bottom: 20px;
+padding :20px;" id="horoscope-details">
+    <label for="horoscope-details-name">Name:</label>
+    <input type="text" id="horoscope-details-name" name="horoscope-details-name">
+    <label for="horoscope-details-date-time">Date and Time:</label>
+    <input type="datetime-local" id="horoscope-details-date-time" name="horoscope-details-date-time">
+    <label for="horoscope-details-place">Place of Birth</label>
+    <input type="text" id="horoscope-details-place" name="horoscope-details-place">
 </div>
 
 
@@ -308,24 +327,113 @@ padding :20px;">
             <td data-index="6">
     </table>
 
-
-
     <table id="thri-suniayam-table">
         <tbody id="thri-suniayam">
         <th colspan="2">
             திதி சூனியம்
         </th>
         <tr>
-            <td id="thri-suniayam-input" contenteditable="true">
+            <td>
+                <select id="horoscope-thri-suniayam-selector" class="form-select">
+                    <option selected value="திதி">திதி</option>
+                    <option value="பிரதமை">பிரதமை</option>
+                    <option value="துவிதியை">துவிதியை</option>
+                    <option value="திருதியை">திருதியை</option>
+                    <option value="சதுர்த்தி">சதுர்த்தி</option>
+                    <option value="பஞ்சமி">பஞ்சமி</option>
+                    <option value="சஷ்டி">சஷ்டி</option>
+                    <option value="சப்தமி">சப்தமி</option>
+                    <option value="அஷ்டமி">அஷ்டமி</option>
+                    <option value="நவமி,தசமி">நவமி,தசமி</option>
+                    <option value="ஏகாதசி">ஏகாதசி</option>
+                    <option value="துவாதசி">துவாதசி</option>
+                    <option value="திரயோதசி">திரயோதசி</option>
+                    <option value="சதுர்த்தசி">சதுர்த்தசி</option>
+                </select>
+            </td>
             <td id="thri-suniayam-result">
         </tr>
         <th colspan="2">
             முடக்கு நட்சத்திரம் & ராசி
         </th>
         <tr>
-            <td id="mudaku-nachatram-input" contenteditable="true">
+            <td>
+                <select id="horoscope-mudaku-nachatram-selector" class="form-select">
+                    <option selected value=0>நட்சத்திரம்</option>
+                    <option value=1>அசுவினி - கேது</option>
+                    <option value=2>பரணி - சுக்கிரன்</option>
+                    <option value=3>கிருத்திகை - சூரியன்</option>
+                    <option value=4>உரோகிணி - சந்திரன்</option>
+                    <option value=5>மிருகசீரிடம் - செவ்வாய்</option>
+                    <option value=6>திருவாதிரை - இராகு</option>
+                    <option value=7>புனர்பூசம் - குரு (வியாழன்)</option>
+                    <option value=8>பூசம் - சனி</option>
+                    <option value=9>ஆயில்யம் - புதன்</option>
+                    <option value=10>மகம் - கேது</option>
+                    <option value=11>பூரம் - சுக்கிரன்</option>
+                    <option value=12>உத்திரம் - சூரியன்</option>
+                    <option value=13>அசுதம் - சந்திரன்</option>
+                    <option value=14>சித்திரை - செவ்வாய்</option>
+                    <option value=15>சுவாதி - இராகு</option>
+                    <option value=16>விசாகம் - குரு (வியாழன்)</option>
+                    <option value=17>அனுடம் - சனி</option>
+                    <option value=18>கேட்டை - புதன்</option>
+                    <option value=19>மூலம் - கேது</option>
+                    <option value=20>பூராடம் - சுக்கிரன்</option>
+                    <option value=21>உத்திராடம் - சூரியன்</option>
+                    <option value=22>திருவோணம் - சந்திரன்</option>
+                    <option value=23>அவிட்டம் - செவ்வாய்</option>
+                    <option value=24>சதயம் - இராகு</option>
+                    <option value=25>பூரட்டாதி - குரு (வியாழன்)</option>
+                    <option value=26>உத்திரட்டாதி - சனி</option>
+                    <option value=27>ரேவதி- புதன்</option>
+
+                </select>
+            </td>
             <td id="mudaku-nachatram-result">
         </tr>
+
+
+        <th colspan="2">
+            கர்ம வினைகள்
+        </th>
+        <tr>
+            <td>
+                <select id="horoscope-karma-vinaikal-selector" class="form-select">
+                    <option selected value="நட்சத்திரம்">நட்சத்திரம்</option>
+                    <option value="சூரியன்-M-ரஜோ">அசுவினி</option>
+                    <option value="சந்திரன்-F-ரஜோ">பரணி</option>
+                    <option value="செவ்வாய்-M-தாமச">கிருத்திகை</option>
+                    <option value="புதன்-A-சாத்விகம்">உரோகிணி</option>
+                    <option value="குரு-M-சாத்விகம்">மிருகசீரிடம்</option>
+                    <option value="சுக்ரன்-F-ரஜோ">திருவாதிரை</option>
+                    <option value="சனி-A-தாமச">புனர்பூசம்</option>
+                    <option value="இராகு-F-தாமச">பூசம்</option>
+                    <option value="சூரியன்-M-ரஜோ">ஆயில்யம்</option>
+                    <option value="சந்திரன்-F-ரஜோ">மகம்</option>
+                    <option value="செவ்வாய்-M-தாமச">பூரம்</option>
+                    <option value="புதன்-A-சாத்விகம்">உத்திரம்</option>
+                    <option value="குரு-M-சாத்விகம்">அசுதம்</option>
+                    <option value="சுக்ரன்-F-ரஜோ">சித்திரை</option>
+                    <option value="சனி-A-தாமச">சுவாதி</option>
+                    <option value="இராகு-F-தாமச">விசாகம்</option>
+                    <option value="சூரியன்-M-ரஜோ">அனுடம்</option>
+                    <option value="சந்திரன்-F-ரஜோ">கேட்டை</option>
+                    <option value="செவ்வாய்-M-தாமச">மூலம்</option>
+                    <option value="புதன்-A-சாத்விகம்">பூராடம்</option>
+                    <option value="குரு-M-சாத்விகம்">உத்திராடம்</option>
+                    <option value="சுக்ரன்-F-ரஜோ">திருவோணம்</option>
+                    <option value="சனி-A-தாமச">அவிட்டம்</option>
+                    <option value="இராகு-F-தாமச">சதயம்</option>
+                    <option value="சூரியன்-M-ரஜோ">பூரட்டாதி</option>
+                    <option value="சந்திரன்-F-ரஜோ">உத்திரட்டாதி</option>
+                    <option value="செவ்வாய்-M-தாமச">ரேவதி</option>
+
+                </select>
+            </td>
+            <td id="karma-vinaikal-result">
+        </tr>
+
     </table>
 </div>
 
@@ -1444,6 +1552,7 @@ padding :20px;">
     </div>
 
 </div>
+
 </body>
 
 </html>

@@ -8,6 +8,7 @@ import {
     SUPER_GOD, THIRI_SUNIYAM,
     transitionDayMap
 } from "./const";
+import htmlParser from 'node-html-parser';
 
 let horoscopeData;
 let selectedHoroscopeName;
@@ -36,11 +37,17 @@ async function saveJSON(key) {
 }
 
 $(document).ready(function () {
-    const thriSuniayamInput = $('#thri-suniayam-input');
-    const mudukuNachatramInput = $('#mudaku-nachatram-input');
-
+    const thriSuniayamInput = $('#horoscope-thri-suniayam-selector');
+    const mudukuNachatramInput = $('#horoscope-mudaku-nachatram-selector');
     const mudukuNachatramResult = $('#mudaku-nachatram-result');
     const thriSuniayamResult = $('#thri-suniayam-result');
+    const horoscopeDetailFields = {
+        name: $('#horoscope-details-name'),
+        dateTime: $('#horoscope-details-date-time'),
+        place: $('#horoscope-details-place')
+    }
+    const karmaVinaikalSelector = $('#horoscope-karma-vinaikal-selector');
+    const karmaVinaikalResult = $("#karma-vinaikal-result");
 
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
@@ -86,10 +93,15 @@ $(document).ready(function () {
         $(`#output-table td[data-index='super-3-god-value']`).text('');
         $(`#output-table td[data-index='super-3-god-total-value']`).text('');
 
-        mudukuNachatramInput.text('');
+        mudukuNachatramInput.val(0);
         mudukuNachatramResult.text('');
-        thriSuniayamInput.text('');
+        thriSuniayamInput.val("திதி");
         thriSuniayamResult.text('');
+        karmaVinaikalSelector.val("நட்சத்திரம்")
+        thriSuniayamResult.text('')
+        Object.entries(horoscopeDetailFields).forEach(([key, field]) => {
+            field.val('')
+        })
         if (clearAll) {
             selectedHoroscopeName = null;
             $(`#horoscope-selector`).val(0)
@@ -234,13 +246,21 @@ $(document).ready(function () {
 
         return {
             horoscope,
+            details: Object.entries(horoscopeDetailFields).reduce((obj, [key, field]) => {
+                obj[key] = field.val()
+                return obj;
+            }, {}),
             thriSuniyam: {
-                input: thriSuniayamInput.text().trim(),
+                input: thriSuniayamInput.val().trim(),
                 result: thriSuniayamResult.text().trim(),
             },
             mudukuNachatram: {
-                input: mudukuNachatramInput.text().trim(),
-                result: thriSuniayamResult.text().trim(),
+                input: mudukuNachatramInput.val().trim(),
+                result: mudukuNachatramResult.text().trim(),
+            },
+            karmaVinaikal: {
+                input: karmaVinaikalSelector.val().trim(),
+                result: karmaVinaikalSelector.text().trim(),
             }
 
         };
@@ -258,13 +278,22 @@ $(document).ready(function () {
             }
         });
         if (config.thriSuniyam) {
-            thriSuniayamInput.text(config.thriSuniyam.input || '');
+            thriSuniayamInput.val(config.thriSuniyam.input || "திதி");
             thriSuniayamResult.text(config.thriSuniyam.result || '');
         }
 
         if (config.mudukuNachatram) {
-            mudukuNachatramInput.text(config.mudukuNachatram.input || '');
+            mudukuNachatramInput.val(config.mudukuNachatram.input || 0);
             mudukuNachatramResult.text(config.mudukuNachatram.result || '');
+        }
+        if (config.details) {
+            Object.entries(horoscopeDetailFields).forEach(([key, field]) => {
+                field.val(config.details[key] || '')
+            })
+        }
+        if (config.karmaVinaikal) {
+            karmaVinaikalSelector.val(config.karmaVinaikal.input || "நட்சத்திரம்")
+            thriSuniayamResult.text(config.karmaVinaikal.result || '');
         }
         regenerateTables();
     }
@@ -328,14 +357,14 @@ $(document).ready(function () {
                 if (dayDifference < value.move) {
                     mark(transitionKey, value.box + 1);
                 } else {
-                    const numberOfMove = Math.round(dayDifference / value.move);
+                    const numberOfMove = Math.ceil(dayDifference / value.move);
                     mark(transitionKey, value.box + numberOfMove);
                 }
             }
         }
     }
 
-    (function init() {
+    (async function init() {
         showTransition();
         const key = localStorage.getItem('userSelectedKey')
         if (key?.length > 0) {
@@ -406,28 +435,22 @@ $(document).ready(function () {
         }
     })
 
-    thriSuniayamInput.on('focusout', () => {
-        const value = thriSuniayamInput.text().trim();
-        if (value) {
-            const map = THIRI_SUNIYAM[value];
-            if (map) {
-                thriSuniayamInput.text(map.name);
-                thriSuniayamResult.text(map.value);
-            }
-        }else{
-            thriSuniayamResult.text("");
-        }
+    thriSuniayamInput.on('change', (event) => {
+        const value = event.currentTarget.value
+        if (!value) return
+        thriSuniayamResult.text(THIRI_SUNIYAM[value] || '');
     });
+    karmaVinaikalSelector.on('change', event => {
+        const value = event.currentTarget.value;
+        karmaVinaikalResult.text(value || '');
+    })
 
-    mudukuNachatramInput.on('focusout', () => {
-
-        const value = mudukuNachatramInput.text().trim();
+    mudukuNachatramInput.on('change', () => {
+        const value = event.currentTarget.value;
         if (value) {
             let converted = MUDAKU_NACHATRAM[value];
             if (!converted) return;
             converted = value + "." + converted
-            mudukuNachatramInput.text(converted);
-
             if (value === 19) {
                 return mudukuNachatramResult.text(converted);
             }
@@ -438,7 +461,7 @@ $(document).ready(function () {
             }
             result = ((19 + result) % 27)
             mudukuNachatramResult.text(result + "." + MUDAKU_NACHATRAM[result]);
-        }else{
+        } else {
             mudukuNachatramResult.text("");
         }
     });
