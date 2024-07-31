@@ -6,7 +6,7 @@ import {
     outputEntries,
     RASI_COUNT,
     SUPER_GOD, THIRI_SUNIYAM,
-    transitionDayMap
+    transitionDayMap, YOGI_AVA_YOGI
 } from "./const";
 
 let horoscopeData;
@@ -47,6 +47,9 @@ $(document).ready(function () {
     }
     const karmaVinaikalSelector = $('#horoscope-karma-vinaikal-selector');
     const karmaVinaikalResult = $("#karma-vinaikal-result");
+    const yogamAvayogamSelector = $("#horoscope-yogam-avayogam-selector");
+    const yogamResult = $("#yogam-result");
+    const avaYogamResult = $("#avayogam-result");
 
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
@@ -65,6 +68,19 @@ $(document).ready(function () {
                 $(`td[data-index='entry${entryNumber}-${godNumber}-${rowNumber}']`).text(1);
             });
         }
+    }
+
+
+    function clearTextValues() {
+        mudukuNachatramInput.val(0);
+        mudukuNachatramResult.text('');
+        thriSuniayamInput.val("திதி");
+        thriSuniayamResult.text('');
+        karmaVinaikalSelector.val("நட்சத்திரம்")
+        thriSuniayamResult.text('');
+        yogamResult.text('');
+        avaYogamResult.text('');
+        yogamAvayogamSelector.val('select');
     }
 
     function clearTables(clearAll) {
@@ -91,13 +107,7 @@ $(document).ready(function () {
         })
         $(`#output-table td[data-index='super-3-god-value']`).text('');
         $(`#output-table td[data-index='super-3-god-total-value']`).text('');
-
-        mudukuNachatramInput.val(0);
-        mudukuNachatramResult.text('');
-        thriSuniayamInput.val("திதி");
-        thriSuniayamResult.text('');
-        karmaVinaikalSelector.val("நட்சத்திரம்")
-        thriSuniayamResult.text('')
+        clearTextValues();
         Object.entries(horoscopeDetailFields).forEach(([key, field]) => {
             field.val('')
         })
@@ -260,6 +270,13 @@ $(document).ready(function () {
             karmaVinaikal: {
                 input: karmaVinaikalSelector.val().trim(),
                 result: karmaVinaikalSelector.find("option:selected")?.text?.(),
+            },
+            yogamAvayogam: {
+                input: yogamAvayogamSelector.val().trim(),
+                result: {
+                    yogi: yogamResult.text().trim(),
+                    avaYogi: avaYogamResult.text().trim(),
+                }
             }
 
         };
@@ -292,8 +309,13 @@ $(document).ready(function () {
         }
         if (config.karmaVinaikal) {
             let value = config.karmaVinaikal.input;
-            karmaVinaikalSelector.val(config.karmaVinaikal.input || "நட்சத்திரம்")
+            karmaVinaikalSelector.val(config.karmaVinaikal.input || "நட்சத்திரம்");
             karmaVinaikalResult.text(value?.split?.(":")[0] || '');
+        }
+        if (config.yogamAvayogam) {
+            yogamAvayogamSelector.val(config.yogamAvayogam.input || "select");
+            yogamResult.text(config.yogamAvayogam.result?.yogi || "");
+            avaYogamResult.text(config.yogamAvayogam.result?.avaYogi || "");
         }
         regenerateTables();
     }
@@ -444,6 +466,12 @@ $(document).ready(function () {
         let value = event.currentTarget.value;
         value = value.split(":")[0]
         karmaVinaikalResult.text(value || '');
+    });
+
+    yogamAvayogamSelector.on('change', event => {
+        const map = YOGI_AVA_YOGI[event.currentTarget.value];
+        yogamResult.text(map?.yogi || "");
+        avaYogamResult.text(map?.avayogi || "");
     })
 
     mudukuNachatramInput.on('change', () => {
