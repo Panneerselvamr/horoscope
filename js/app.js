@@ -8,7 +8,6 @@ import {
     SUPER_GOD, THIRI_SUNIYAM,
     transitionDayMap
 } from "./const";
-import htmlParser from 'node-html-parser';
 
 let horoscopeData;
 let selectedHoroscopeName;
