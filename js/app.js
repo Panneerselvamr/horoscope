@@ -102,6 +102,12 @@ $(document).ready(function () {
             }
             $(this).text('');
         })
+        $('#entry-table-navamsam td').each(function () {
+            if ($(this).hasClass('laknam-highlight')) {
+                $(this).removeClass('laknam-highlight');
+            }
+            $(this).text('');
+        })
         $(`#output-table td`).each(function () {
             if ($(this).hasClass('laknam-highlight')) {
                 $(this).removeClass('laknam-highlight');
@@ -218,8 +224,8 @@ $(document).ready(function () {
         generateSpecialGodValues()
     }
 
-    function changeNumberToGodOnOtherCells(currentIndex) {
-        $(`#entry-table td`).each(function () {
+    function changeNumberToGodOnOtherCells(tableSelector, currentIndex) {
+        tableSelector.each(function () {
             const currentValues = $(this).text().trim();
             if (!currentValues.length) return;
             const index = $(this).data('index');
@@ -234,6 +240,9 @@ $(document).ready(function () {
                     convertedValues += currentValue + ' ';
             })
             $(this).text(convertedValues.trim());
+            if (convertedValues.includes('லக்') || convertedValues.includes('8')) {
+                $(this).addClass('laknam-highlight');
+            }
         })
     }
 
@@ -246,6 +255,7 @@ $(document).ready(function () {
 
     function getCurrentConfig() {
         const horoscope = {}
+        const navamsam = {}
         $(`#entry-table td`).each(function () {
             let currentValues = $(this).text().trim();
             if (currentValues === 'invalid') return;
@@ -257,7 +267,18 @@ $(document).ready(function () {
             horoscope[currentIndex] = currentValues;
         });
 
+
+        $(`#entry-table-navamsam td`).each(function () {
+            let currentValues = $(this).text().trim();
+            if (currentValues === 'invalid') return;
+            if (!currentValues) return;
+
+            const currentIndex = $(this).data('index');
+            navamsam[currentIndex] = currentValues;
+        });
+
         return {
+            navamsam,
             horoscope,
             details: Object.entries(horoscopeDetailFields).reduce((obj, [key, field]) => {
                 obj[key] = field.val()
@@ -292,9 +313,18 @@ $(document).ready(function () {
         if (!config)
             return;
         let horoscope = config.horoscope || config; //backward compatability
+        const navamsam = config.navamsam;
         $(`#entry-table td`).each(function () {
             const currentIndex = $(this).data('index');
             const currentValues = horoscope[currentIndex];
+            if (currentValues) {
+                $(this).text(currentValues);
+            }
+        });
+
+        $(`#entry-table-navamsam td`).each(function () {
+            const currentIndex = $(this).data('index');
+            const currentValues = navamsam[currentIndex];
             if (currentValues) {
                 $(this).text(currentValues);
             }
@@ -414,9 +444,16 @@ $(document).ready(function () {
         }
     })()
 
-    $('#entry-table td').on('focusout', function (event) {
-        changeNumberToGodOnOtherCells($(this).data('index'))
+    const entryTableTdSelector = $('#entry-table td');
+    const entryTableNavamsamTdSelector = $('#entry-table-navamsam td')
+    entryTableTdSelector.on('focusout', function (event) {
+        changeNumberToGodOnOtherCells(entryTableTdSelector,$(this).data('index'))
         regenerateTables();
+    });
+
+
+    entryTableNavamsamTdSelector.on('focusout', function (event) {
+        changeNumberToGodOnOtherCells(entryTableNavamsamTdSelector, $(this).data('index'))
     });
 
     $('#horoscope-new, #horoscope-clear').on('click', () => clearTables(true));

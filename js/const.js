@@ -93,7 +93,7 @@ export const godToNumberMap = {
 export const numberToGodMap = Object.keys(godToNumberMap).reduce((ret, key) => {
     ret[godToNumberMap[key]] = key
     return ret;
-}, {});
+}, {11: 'ம'});
 
 export const transitionDayMap = {
     1: {
