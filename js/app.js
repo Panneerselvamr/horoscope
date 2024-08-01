@@ -1,7 +1,7 @@
 import {
     EntryMap,
     GOD_COUNT,
-    godToNumberMap, MUDAKU_NACHATRAM,
+    godToNumberMap, MUDAKU_NACHATRAM, NACHATRAM_DASA_AND_PUSHKARAM,
     numberToGodMap,
     outputEntries,
     RASI_COUNT,
@@ -50,6 +50,9 @@ $(document).ready(function () {
     const yogamAvayogamSelector = $("#horoscope-yogam-avayogam-selector");
     const yogamResult = $("#yogam-result");
     const avaYogamResult = $("#avayogam-result");
+    const nakshatramDasaPushpakaramSelector = $("#horoscope-nakshatram-dasa-pushpakaram");
+    const nakshatDasamPushpakaramResult = $("#nakshatram-dasa-pushpakaram-result");
+    const nakshatDasamPushpakaramTitle = $("#nakshatram-dasa-pushpakaram-title");
 
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
@@ -81,6 +84,7 @@ $(document).ready(function () {
         yogamResult.text('');
         avaYogamResult.text('');
         yogamAvayogamSelector.val('select');
+        nakshatramDasaPushpakaramSelector.val("நட்சத்திரம்");
     }
 
     function clearTables(clearAll) {
@@ -277,8 +281,10 @@ $(document).ready(function () {
                     yogi: yogamResult.text().trim(),
                     avaYogi: avaYogamResult.text().trim(),
                 }
+            },
+            nakshatramDasaPushpakaram: {
+                input: nakshatramDasaPushpakaramSelector.val().trim(),
             }
-
         };
     }
 
@@ -317,7 +323,19 @@ $(document).ready(function () {
             yogamResult.text(config.yogamAvayogam.result?.yogi || "");
             avaYogamResult.text(config.yogamAvayogam.result?.avaYogi || "");
         }
+        if (config.nakshatramDasaPushpakaram) {
+            nakshatramDasaPushpakaramSelector.val(config.nakshatramDasaPushpakaram.input || "நட்சத்திரம்");
+            const found = getNakshatramDasaPushpakaramResult(config.nakshatramDasaPushpakaram.input)
+            nakshatDasamPushpakaramResult.text(found.result);
+            nakshatDasamPushpakaramTitle.text(found.title);
+        }
         regenerateTables();
+    }
+
+    function getNakshatramDasaPushpakaramResult(val) {
+        const result = NACHATRAM_DASA_AND_PUSHKARAM.find((item) => item.nakshatras.includes(val))
+        if (!result) return {result: '', title: ''};
+        return {result : `${result.name}-${result.gender}-${result.number}-${result.houses}`, title: result.description}
     }
 
     function loadSelector() {
@@ -472,6 +490,12 @@ $(document).ready(function () {
         const map = YOGI_AVA_YOGI[event.currentTarget.value];
         yogamResult.text(map?.yogi || "");
         avaYogamResult.text(map?.avayogi || "");
+    })
+
+    nakshatramDasaPushpakaramSelector.on('change',event=>{
+        const found = getNakshatramDasaPushpakaramResult(event.currentTarget.value);
+        nakshatDasamPushpakaramResult.text(found.result);
+        nakshatDasamPushpakaramTitle.text(found.title);
     })
 
     mudukuNachatramInput.on('change', () => {
