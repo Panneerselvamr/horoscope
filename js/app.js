@@ -54,6 +54,10 @@ $(document).ready(function () {
     const nakshatDasamPushpakaramResult = $("#nakshatram-dasa-pushpakaram-result");
     const nakshatDasamPushpakaramTitle = $("#nakshatram-dasa-pushpakaram-title");
 
+    const bagasdanamMaragasdanamSelector = $("#horoscope-bagasdanam-maragasdanam-selector");
+    const bagasdanamResult = $("#bagasdanam-result");
+    const maragasdanamResult = $("#maragasdanam-result");
+
     function generateTable(entryNumber, rasiNumber, currentValues) {
 
         const output = currentValues.toString().split(/\s+/);
@@ -85,6 +89,7 @@ $(document).ready(function () {
         avaYogamResult.text('');
         yogamAvayogamSelector.val('select');
         nakshatramDasaPushpakaramSelector.val("நட்சத்திரம்");
+        bagasdanamMaragasdanamSelector.val("ராசி");
     }
 
     function clearTables(clearAll) {
@@ -305,6 +310,11 @@ $(document).ready(function () {
             },
             nakshatramDasaPushpakaram: {
                 input: nakshatramDasaPushpakaramSelector.val().trim(),
+            },
+            bagasdanamMaragasdanam: {
+                input: bagasdanamMaragasdanamSelector.val().trim(),
+                result: {bagasdanam: bagasdanamResult.text(), maragasdanam: maragasdanamResult.text()},
+
             }
         };
     }
@@ -314,21 +324,22 @@ $(document).ready(function () {
             return;
         let horoscope = config.horoscope || config; //backward compatability
         const navamsam = config.navamsam;
-        $(`#entry-table td`).each(function () {
-            const currentIndex = $(this).data('index');
-            const currentValues = horoscope[currentIndex];
-            if (currentValues) {
-                $(this).text(currentValues);
-            }
-        });
-
-        $(`#entry-table-navamsam td`).each(function () {
-            const currentIndex = $(this).data('index');
-            const currentValues = navamsam[currentIndex];
-            if (currentValues) {
-                $(this).text(currentValues);
-            }
-        });
+        if (horoscope)
+            $(`#entry-table td`).each(function () {
+                const currentIndex = $(this).data('index');
+                const currentValues = horoscope[currentIndex];
+                if (currentValues) {
+                    $(this).text(currentValues);
+                }
+            });
+        if (navamsam)
+            $(`#entry-table-navamsam td`).each(function () {
+                const currentIndex = $(this).data('index');
+                const currentValues = navamsam[currentIndex];
+                if (currentValues) {
+                    $(this).text(currentValues);
+                }
+            });
         if (config.thriSuniyam) {
             thriSuniayamInput.val(config.thriSuniyam.input || "திதி");
             thriSuniayamResult.text(config.thriSuniyam.result || '');
@@ -359,13 +370,18 @@ $(document).ready(function () {
             nakshatDasamPushpakaramResult.text(found.result);
             nakshatDasamPushpakaramTitle.text(found.title);
         }
+        if (config.bagasdanamMaragasdanam) {
+            bagasdanamMaragasdanamSelector.val(config.bagasdanamMaragasdanam.input || "ராசி");
+            bagasdanamResult.text(config.bagasdanamMaragasdanam?.result?.bagasdanam || "")
+            maragasdanamResult.text(config.bagasdanamMaragasdanam?.result?.maragasdanam || "")
+        }
         regenerateTables();
     }
 
     function getNakshatramDasaPushpakaramResult(val) {
         const result = NACHATRAM_DASA_AND_PUSHKARAM.find((item) => item.nakshatras.includes(val))
         if (!result) return {result: '', title: ''};
-        return {result : `${result.name}-${result.gender}-${result.number}-${result.houses}`, title: result.description}
+        return {result: `${result.name}-${result.gender}-${result.number}-${result.houses}`, title: result.description}
     }
 
     function loadSelector() {
@@ -447,7 +463,7 @@ $(document).ready(function () {
     const entryTableTdSelector = $('#entry-table td');
     const entryTableNavamsamTdSelector = $('#entry-table-navamsam td')
     entryTableTdSelector.on('focusout', function (event) {
-        changeNumberToGodOnOtherCells(entryTableTdSelector,$(this).data('index'))
+        changeNumberToGodOnOtherCells(entryTableTdSelector, $(this).data('index'))
         regenerateTables();
     });
 
@@ -529,10 +545,15 @@ $(document).ready(function () {
         avaYogamResult.text(map?.avayogi || "");
     })
 
-    nakshatramDasaPushpakaramSelector.on('change',event=>{
+    nakshatramDasaPushpakaramSelector.on('change', event => {
         const found = getNakshatramDasaPushpakaramResult(event.currentTarget.value);
         nakshatDasamPushpakaramResult.text(found.result);
         nakshatDasamPushpakaramTitle.text(found.title);
+    })
+    bagasdanamMaragasdanamSelector.on('change', event => {
+        const values = event.currentTarget.value?.split(":")
+        bagasdanamResult.text(values?.[1] || "")
+        maragasdanamResult.text(values?.[2] || "")
     })
 
     mudukuNachatramInput.on('change', () => {
