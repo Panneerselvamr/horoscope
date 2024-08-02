@@ -557,7 +557,7 @@ $(document).ready(function () {
     })
 
     mudukuNachatramInput.on('change', () => {
-        const value = event.currentTarget.value;
+        const value = +event.currentTarget.value;
         if (value) {
             let converted = MUDAKU_NACHATRAM[value];
             if (!converted) return;
