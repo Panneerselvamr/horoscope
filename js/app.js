@@ -90,6 +90,16 @@ $(document).ready(function () {
         yogamAvayogamSelector.val('select');
         nakshatramDasaPushpakaramSelector.val("நட்சத்திரம்");
         bagasdanamMaragasdanamSelector.val("ராசி");
+        nakshatDasamPushpakaramResult.text('');
+        nakshatDasamPushpakaramTitle.text('');
+        bagasdanamResult.text("")
+        maragasdanamResult.text("")
+        $('.horoscope-addition-field-2-tr').each((index, tr) => {
+            const currentClassName = tr.classList[1]
+            const selects = $(tr).find('select')
+            $(selects[0]).val(currentClassName + ':select');
+            $(selects[1]).val(currentClassName + ":0");
+        });
     }
 
     function clearTables(clearAll) {
@@ -258,9 +268,25 @@ $(document).ready(function () {
 
     let processedTransition;
 
+    function getPlanetsPathamDegree() {
+        const planets_patham_degree = {};
+
+        $('.horoscope-addition-field-2-tr').each((index, tr) => {
+            const tableContent = $(tr).find('td')
+            const currentClassName = tr.classList[1]
+            if (tableContent?.length === 3)
+                planets_patham_degree[currentClassName] = {
+                    degree: $(tableContent[2]).find('select').val(),
+                    patham: $(tableContent[1]).find('select').val(),
+                }
+        });
+        return planets_patham_degree
+    }
+
     function getCurrentConfig() {
-        const horoscope = {}
-        const navamsam = {}
+        const horoscope = {};
+        const navamsam = {};
+        const planets_patham_degree = getPlanetsPathamDegree();
         $(`#entry-table td`).each(function () {
             let currentValues = $(this).text().trim();
             if (currentValues === 'invalid') return;
@@ -289,6 +315,7 @@ $(document).ready(function () {
                 obj[key] = field.val()
                 return obj;
             }, {}),
+            planets_patham_degree,
             thriSuniyam: {
                 input: thriSuniayamInput.val().trim(),
                 result: thriSuniayamResult.text().trim(),
@@ -374,6 +401,13 @@ $(document).ready(function () {
             bagasdanamMaragasdanamSelector.val(config.bagasdanamMaragasdanam.input || "ராசி");
             bagasdanamResult.text(config.bagasdanamMaragasdanam?.result?.bagasdanam || "")
             maragasdanamResult.text(config.bagasdanamMaragasdanam?.result?.maragasdanam || "")
+        }
+        if (config.planets_patham_degree) {
+            Object.entries(config.planets_patham_degree).forEach(([className, {degree, patham}]) => {
+                const row = $(`.horoscope-addition-field-2-tr.${className}`);
+                $(row.find('select')[1]).val(degree);
+                $(row.find('select')[0]).val(patham);
+            })
         }
         regenerateTables();
     }
