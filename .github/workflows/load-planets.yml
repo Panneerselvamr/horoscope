@@ -1,4 +1,4 @@
-name: load gdoc
+name: load plant position
 on:
   workflow_dispatch:
   schedule:
