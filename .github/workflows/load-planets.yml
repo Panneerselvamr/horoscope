@@ -1,4 +1,4 @@
-name: load current planet position
+name: load gdoc
 on:
   workflow_dispatch:
   schedule:
@@ -7,13 +7,29 @@ jobs:
   load:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: npm install
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Checkout
+        uses: 'actions/checkout@v3'
+        with:
+          ref: main
+      - name : Setting up CI
         run: |
-          npm install
+          git config user.name "GitHub CI"
+          git config user.email "<>"
+      - name : Updating json
+        run: |
+          npm i
           npm run planet-position
+        env:
+          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      - name : Committing changes
+        run: |
           git add .
-          git commit -m 'Update planet position'
-          git push origin main
+          git commit -m "CI : Updated plannet JSON" || exit 0
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
