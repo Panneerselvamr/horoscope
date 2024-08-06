@@ -2,7 +2,7 @@ name: load current planet position
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 5 * * 0,2,5'
+    - cron: '1 */6 * * *'
 jobs:
   load:
     runs-on: ubuntu-latest
