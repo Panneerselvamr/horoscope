@@ -8,6 +8,7 @@ import {
     SUPER_GOD, THIRI_SUNIYAM,
     transitionDayMap, YOGI_AVA_YOGI
 } from "./const";
+import planetPositionJson from "../script/planet-position.json";
 
 let horoscopeData;
 let selectedHoroscopeName;
@@ -440,48 +441,64 @@ $(document).ready(function () {
         loadSelector();
     }
 
-    function mark(number, box) {
-        if (box > 12) {
-            box = box % 12
-        }
-        const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
-            if (index === Number(number)) return god;
-        })
-        let valueToUpdate = findGod?.[0];
-        if (valueToUpdate && box) {
-            const selector = $(`#transition-table td[data-index=${box}]`)
-            const existingValue = selector.text();
-            if (existingValue?.includes?.(valueToUpdate)) return;
-            if (existingValue) {
-                valueToUpdate = existingValue + ' ' + valueToUpdate;
+    /*
+        function mark(number, box) {
+            if (box > 12) {
+                box = box % 12
             }
-            selector.text(valueToUpdate);
-            for (let i = 1; i <= GOD_COUNT; i++) {
-                $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
+            const findGod = Object.entries(godToNumberMap).find(([god, index]) => {
+                if (index === Number(number)) return god;
+            })
+            let valueToUpdate = findGod?.[0];
+            if (valueToUpdate && box) {
+                const selector = $(`#transition-table td[data-index=${box}]`)
+                const existingValue = selector.text();
+                if (existingValue?.includes?.(valueToUpdate)) return;
+                if (existingValue) {
+                    valueToUpdate = existingValue + ' ' + valueToUpdate;
+                }
+                selector.text(valueToUpdate);
+                for (let i = 1; i <= GOD_COUNT; i++) {
+                    $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
+                }
             }
-        }
-    }
+        }*/
 
     function showTransition() {
         if (processedTransition)
             return;
         processedTransition = true;
-        const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
-        for (let transitionKey in transitionDayMap) {
-            const value = transitionDayMap[transitionKey];
-            const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
-            if (tillDate > currentDate)
-                mark(transitionKey, value.box);
-            else {
-                const dayDifference = currentDate - tillDate;
-                if (dayDifference < value.move) {
-                    mark(transitionKey, value.box + 1);
-                } else {
-                    const numberOfMove = Math.ceil(dayDifference / value.move);
-                    mark(transitionKey, value.box + numberOfMove);
-                }
+        $(`#transition-table td`).each((_i, td) => {
+            const selector = $(td);
+            const index = selector.data('index');
+            if (index !== undefined) {
+                const planets = planetPositionJson?.output?.[index];
+                if (planets)
+                    selector.text(planets)
             }
-        }
+        });
+        Object.entries(planetPositionJson?.transitionDayMap).forEach(([number, {box}]) => {
+            for (let i = 1; i <= GOD_COUNT; i++) {
+                $(`#entry${number}-table td[data-index=entry${number}-${i}-${box}]`).addClass('yellow-background')
+            }
+        })
+        /*
+                const currentDate = Math.round(Date.now() / (24 * 60 * 60 * 1000));
+                for (let transitionKey in transitionDayMap) {
+                    const value = transitionDayMap[transitionKey];
+                    const tillDate = value.till.getTime() / (24 * 60 * 60 * 1000);
+                    if (tillDate > currentDate)
+                        mark(transitionKey, value.box);
+                    else {
+                        const dayDifference = currentDate - tillDate;
+                        if (dayDifference < value.move) {
+                            mark(transitionKey, value.box + 1);
+                        } else {
+                            const numberOfMove = Math.ceil(dayDifference / value.move);
+                            mark(transitionKey, value.box + numberOfMove);
+                        }
+                    }
+                }*/
     }
 
     (async function init() {

@@ -1,0 +1,19 @@
+name: load current planet position
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 5 * * 0,2,5'
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: npm install
+        run: |
+          npm install
+          npm run planet-position
+          git add .
+          git commit -m 'Update planet position'
+          git push origin main
