@@ -17,6 +17,7 @@ const houseIndexMapper = {
 }
 const IndexToHouseMapper = Object.fromEntries(Object.entries(houseIndexMapper).map(a => a.reverse()))
 const result = {
+    updatedAt : Date.now(),
     transitionDayMap: {
         1: {
             box: 1,
@@ -56,27 +57,24 @@ const result = {
             box: 6,
         }
     },
-    output : {}
+    output: {}
 }
-let transitionDayMap =
-    (async () => {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.goto('https://horoscope.hosuronline.com/rasi-chart-kattam.php');
-        await page.waitForNetworkIdle();
-        const table = await page.$('#chart-table');
-        console.log(table);
+setTimeout(async () => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto('https://horoscope.hosuronline.com/rasi-chart-kattam.php');
+    await page.waitForNetworkIdle();
+    const table = await page.$('#chart-table');
+    const data = await table.$$eval('td', tdElements => tdElements.map(td => td.innerText));
+    Object.entries(houseIndexMapper).forEach(([house, index]) => {
+        result.output[house] = data[index - 1];
+    })
 
-        const data = await table.$$eval('td', tdElements => tdElements.map(td => td.innerText));
-        console.log(data);
-
-        Object.entries(houseIndexMapper).forEach(([house, index]) => {
-            result.output[house] = data[index -1];
-        })
-
-        Object.entries(result.transitionDayMap).forEach(([key, {search}]) => {
-            const foundIndex = data.findIndex(item => item.toLowerCase().includes(search))
-            result.transitionDayMap[key].box = IndexToHouseMapper[foundIndex +1 ]
-        })
-        fs.writeFileSync(__dirname + '/planet-position.json', JSON.stringify(result, null, 2));
-    })();
+    Object.entries(result.transitionDayMap).forEach(([key, {search}]) => {
+        const foundIndex = data.findIndex(item => item.toLowerCase().includes(search))
+        result.transitionDayMap[key].box = IndexToHouseMapper[foundIndex + 1]
+    })
+    console.log(result);
+    fs.writeFileSync('./script/planet-position.json', JSON.stringify(result, null, 2));
+    process.exit(0)
+})
