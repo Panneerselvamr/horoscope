@@ -23,9 +23,6 @@ jobs:
         run: |
           npm i
           npm run planet-position
-        env:
-          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       - name : Committing changes
         run: |
           git add .
@@ -33,3 +30,6 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  deploy:
+    needs: [ load ]
+    uses: Panneerselvamr/horoscope/.github/workflows/static.yml@main
