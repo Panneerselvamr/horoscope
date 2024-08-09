@@ -1,6 +1,7 @@
 name: load plant position
 on:
   workflow_dispatch:
+  workflow_call:
   schedule:
     - cron: '1 */6 * * *'
 jobs:
