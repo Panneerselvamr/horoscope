@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1724522996846,
+  "updatedAt": 1724546628241,
   "transitionDayMap": {
     "1": {
       "box": "5",
@@ -23,7 +23,7 @@
     },
     "6": {
       "search": "venus",
-      "box": "5"
+      "box": "6"
     },
     "7": {
       "search": "saturn",
@@ -40,11 +40,11 @@
   },
   "output": {
     "1": "நிலவு\nMoon\n",
-    "2": "ல‌க்\nAsc\nசெவ்வாய்\nMars\nவியாழன்(குரு)\nJupiter\n",
+    "2": "செவ்வாய்\nMars\nவியாழன்(குரு)\nJupiter\n",
     "3": "",
     "4": "அறிவன்(புத)\nMercury\n(வக்)\n(R)",
-    "5": "ஞாயிறு(சூ)\nSun\nவெள்ளி(சுக்)\nVenus\n",
-    "6": "கேது\nKethu\n",
+    "5": "ல‌க்\nAsc\nஞாயிறு(சூ)\nSun\n",
+    "6": "வெள்ளி(சுக்)\nVenus\nகேது\nKethu\n",
     "7": "",
     "8": "",
     "9": "",
