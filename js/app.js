@@ -519,6 +519,8 @@ $(document).ready(function () {
     });
 
 
+
+
     entryTableNavamsamTdSelector.on('focusout', function (event) {
         changeNumberToGodOnOtherCells(entryTableNavamsamTdSelector, $(this).data('index'))
     });
@@ -626,5 +628,22 @@ $(document).ready(function () {
         } else {
             mudukuNachatramResult.text("");
         }
+    });
+
+    $('.collapsible-header').each(function() {
+        $(this).on('click', function() {
+            // Toggle arrow rotation
+            const $arrow = $(this).find('.arrow');
+            $arrow.css('transform', $arrow.css('transform') === 'rotate(180deg)' ? '' : 'rotate(180deg)');
+
+            // Get and toggle content
+            $(this).next().toggle();
+
+            // Add hover effect
+            $(this).hover(
+                function() { $(this).css('backgroundColor', '#ebebeb'); },
+                function() { $(this).css('backgroundColor', '#f5f5f5'); }
+            );
+        });
     });
 });
