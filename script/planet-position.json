@@ -1,12 +1,12 @@
 {
-  "updatedAt": 1757312224077,
+  "updatedAt": 1757334095790,
   "transitionDayMap": {
     "1": {
       "box": "5",
       "search": "sun"
     },
     "2": {
-      "box": "11",
+      "box": "12",
       "search": "moon"
     },
     "3": {
@@ -46,10 +46,10 @@
     "5": "ஞாயிறு(சூ)\nSun\nஅறிவன்(புத)\nMercury\nகேது\nKethu\n",
     "6": "செவ்வாய்\nMars\n",
     "7": "",
-    "8": "ல‌க்\nAsc\n",
+    "8": "",
     "9": "",
     "10": "",
-    "11": "நிலவு\nMoon\nஇராகு\nRahu\n",
-    "12": "காரி(சனி)\nSaturn\n(வக்)\n(R)"
+    "11": "ல‌க்\nAsc\nஇராகு\nRahu\n",
+    "12": "நிலவு\nMoon\nகாரி(சனி)\nSaturn\n(வக்)\n(R)"
   }
 }
